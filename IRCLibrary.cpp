@@ -1,5 +1,8 @@
 #include "IRCLibrary.h"
 
+int IRCLibrary::ircSock = 0;
+string IRCLibrary::currentChannel = "";
+
 bool IRCLibrary::Connect(string host, int port) {
     // create socket
     ircSock = socket(AF_INET, SOCK_STREAM, 0);
@@ -33,27 +36,29 @@ bool IRCLibrary::Connect(string host, int port) {
 void IRCLibrary::Disconnect() {
     close(ircSock);
 }
-void IRCLibrary::Identify(string username, string nickname, string password) {
-    Send("NICK" + nickname);
-    Send("USER" + username + " 0 0 :" + username);
-    Send("PRIVMSG NickServ IDENTIFY " + password);
+void IRCLibrary::Login(string nickname, string channel) {
+    Send("NICK " + nickname);
+    Send("JOIN #" + channel);
+    SetCurrentChannel(channel);
 }
 void IRCLibrary::Send(string message) {
     message += "\r\n";
     send(ircSock, message.c_str(), message.length(), 0);
 }
-string IRCLibrary::Receive() {
+string IRCLibrary::Receive(bool &error) {
+    error = false;
     char buffer[BUFFER_SIZE+1] = {0};
     if (recv(ircSock, buffer, BUFFER_SIZE, 0) < 0) {
         perror("Error: Failed to receive message!");
+        error = true;
         return "";
     }
-    string sBuffer(buffer);
+    string sBuffer = string(buffer);
     Parse(sBuffer);
     return sBuffer;
 }
 void IRCLibrary::Parse(string &message) {
-    if (message.find("\r\n") == buffer.length()-2)
+    if (message.find("\r\n") == message.length()-2)
         message.erase(message.length()-2);
 }
 void IRCLibrary::SetCurrentChannel(string channel) {
