@@ -37,6 +37,7 @@ void IRCLibrary::Disconnect() {
 }
 void IRCLibrary::Login(string nickname, string channel) {
     Send("NICK " + nickname);
+    Send("USER " + nickname + " 0 0 :" + nickname);
     Send("JOIN #" + channel);
 }
 void IRCLibrary::Send(string message) {

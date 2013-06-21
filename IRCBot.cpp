@@ -33,8 +33,11 @@ bool IRCBot::Loop() {
 }
 
 bool IRCBot::BotAction(string message) {
-
-
+    bool error;
+    IRCMessageParser::ParseMessage(message, error);
+    if (error)
+        cout << "ERROR occured!" << endl;
+    return true;
 }
 
 void IRCBot::SendMessage(string message) {
@@ -46,8 +49,8 @@ void IRCBot::ChangeNick(string nickname) {
     SendMessage("Changed nickname into " + nickname);
 }
 void IRCBot::ChangeTopic(string topic, string channel) {
-    IRCLibrary::Send("TOPIC " + currentChannel + " " + topic);
-    SendMessage("Tried to change topic into " + topic);
+    IRCLibrary::Send("TOPIC " + channel + " " + topic);
+    SendMessage("Tried to change topic into " + topic + " on channel " + channel);
 }
 void IRCBot::JoinChannel(string channel) {
     IRCLibrary::Send("JOIN #" + channel);

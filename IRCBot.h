@@ -2,6 +2,7 @@
 #define IRCBOT_H
 
 #include "IRCLibrary.h"
+#include "IRCMessageParser.h"
 
 class IRCBot {
     public:
@@ -23,7 +24,7 @@ class IRCBot {
         void    SendMessage(string message);
 
         void    ChangeNick(string nickname);
-        void    ChangeTopic(string topic);
+        void    ChangeTopic(string topic, string channel);
         void    JoinChannel(string channel);
         void    LeaveChannel(string channel);
 
