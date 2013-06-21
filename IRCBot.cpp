@@ -19,24 +19,38 @@ bool IRCBot::ConnectToServer(string host, int port, string channel) {
 }
 
 bool IRCBot::Loop() {
-    string buffer;
-    bool error;
+    string              buffer;
+    bool                receiveError,
+                        parseError;
+    IRCMessageObject    messageObject;
+
     while (true) {
-        buffer = IRCLibrary::Receive(error);
-        if (error)
+        // get message from server
+        buffer = IRCLibrary::Receive(receiveError);
+        if (receiveError)
             return false;
         cout << buffer << endl;
         CheckPing(buffer);
-        if (!BotAction(buffer))
+
+        // parse buffer and create message object
+        messageObject = IRCMessageParser::ParseMessage(buffer, parseError);
+
+        // continue with loop if message is useless
+        if (parseError)
+            continue;
+
+        // log message if logging is enabled
+        if (logging)
+            LogMessage(messageObject);
+
+        // interpret message and perform bot function
+        if (!BotAction(messageObject))
             return false;
     } return true;
 }
 
-bool IRCBot::BotAction(string message) {
-    bool error;
-    IRCMessageParser::ParseMessage(message, error);
-    if (error)
-        cout << "ERROR occured!" << endl;
+bool IRCBot::BotAction(IRCMessageObject messageObject) {
+
     return true;
 }
 

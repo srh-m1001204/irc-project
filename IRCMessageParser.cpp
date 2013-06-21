@@ -45,11 +45,6 @@ IRCMessageObject IRCMessageParser::ParseMessage(string message, bool &error) {
     if (!msgPart.empty())
         IRCMessageParser::CheckAndAddPart(partNo, msgPart, msgObj);
 
-    cout << endl << endl;
-    for (vector<string>::iterator i=msgObj.message.begin(); i!=msgObj.message.end(); i++)
-        cout << "PART: " << *i << "|||" << endl;
-    cout << endl << endl;
-
     error = false;
     return msgObj;
 }
