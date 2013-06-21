@@ -1,7 +1,6 @@
 #include "IRCLibrary.h"
 
 int IRCLibrary::ircSock = 0;
-string IRCLibrary::currentChannel = "";
 
 bool IRCLibrary::Connect(string host, int port) {
     // create socket
@@ -39,7 +38,6 @@ void IRCLibrary::Disconnect() {
 void IRCLibrary::Login(string nickname, string channel) {
     Send("NICK " + nickname);
     Send("JOIN #" + channel);
-    SetCurrentChannel(channel);
 }
 void IRCLibrary::Send(string message) {
     message += "\r\n";
@@ -60,10 +58,4 @@ string IRCLibrary::Receive(bool &error) {
 void IRCLibrary::Parse(string &message) {
     if (message.find("\r\n") == message.length()-2)
         message.erase(message.length()-2);
-}
-void IRCLibrary::SetCurrentChannel(string channel) {
-    currentChannel = channel;
-}
-string IRCLibrary::GetCurrentChannel() {
-    return currentChannel;
 }

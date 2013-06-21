@@ -27,17 +27,13 @@ class IRCLibrary {
     public:
         static bool     Connect(string host, int port);
         static void     Disconnect();
-        static void     Identify(string username, string nickname, string password);
+        static void     Login(string nickname, string channel);
         static void     Send(string message);
-        static string   Receive();
+        static string   Receive(bool &error);
         static void     Parse(string &message);
 
-        static void     SetCurrentChannel(string channel);
-        static string   GetCurrentChannel();
     private:
         static int      ircSock;
-        static string   currentChannel;
-
 };
 
 #endif
