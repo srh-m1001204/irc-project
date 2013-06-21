@@ -11,7 +11,8 @@ enum IRCMessageType {
     IRC_JOIN,
     IRC_PART,
     IRC_TOPIC,
-    IRC_NOTICE
+    IRC_NOTICE,
+    IRC_QUIT
 };
 
 class IRCMessageObject {
@@ -27,6 +28,7 @@ public:
 class IRCMessageParser {
 public:
     static IRCMessageObject ParseMessage(string message, bool &error);
+    static void             CheckAndAddPart(int partNo, string msgPart, IRCMessageObject &msgObj);
 };
 
 #endif
