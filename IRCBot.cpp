@@ -55,13 +55,9 @@ bool IRCBot::BotAction(IRCMessageObject messageObject) {
 
     int pos;
     if (!messageObject.channel.empty()) {
-        vector<string> str; str.push_back("hallo"); str.push_back("hello"); str.push_back("hi");
-        if ((pos = messageObject.Find(str)) != -1)
+        string str[3] = { "hallo", "hello", "hi" };
+        if ((pos = messageObject.Find(str, 3)) != -1)
             SendMessage("Hallo " + messageObject.sender + "!");
-        cout << pos << "!!!" << endl;
-    }
-    if (messageObject.receiver == nickname) {
-
     }
 
 
@@ -106,7 +102,12 @@ void IRCBot::CheckPing(string &buffer) {
         IRCLibrary::Send(pong);
     }
 }
+void IRCBot::CheckGreeting(IRCMessageObject &messageObject) {
 
+}
+void IRCBot::CheckBotCommands(IRCMessageObject &messageObject) {
+
+}
 void IRCBot::SetCurrentChannel(string channel) {
     currentChannel = channel;
 }

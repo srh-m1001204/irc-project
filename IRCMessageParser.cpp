@@ -3,6 +3,7 @@
 // class IRCMessageObject
 IRCMessageObject::IRCMessageObject() {}
 IRCMessageObject::~IRCMessageObject() {}
+// search for single string
 int IRCMessageObject::Find(string str) {
     transform(str.begin(), str.end(), str.begin(), ::tolower);
     string temp;
@@ -15,6 +16,22 @@ int IRCMessageObject::Find(string str) {
         index++;
     } return -1;
 }
+// search for multiple strings stored in an array
+int IRCMessageObject::Find(string str[], size_t length) {
+    string temp1, temp2;
+    int index = 0;
+    for (vector<string>::iterator it1=message.begin(); it1!=message.end(); it1++) {
+        temp1 = *it1;
+        transform(temp1.begin(), temp1.end(), temp1.begin(), ::tolower);
+        for (size_t i=0; i<length; i++) {
+            temp2 = str[i];
+            transform(temp2.begin(), temp2.end(), temp2.begin(), ::tolower);
+            if (temp1.find(temp2) != string::npos)
+                return index;
+        } index++;
+    } return -1;
+}
+// search for multiple strings stored in a vector
 int IRCMessageObject::Find(vector<string> strVec) {
     string temp1, temp2;
     int index = 0;

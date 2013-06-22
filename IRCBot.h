@@ -44,6 +44,8 @@ class IRCBot {
         void    LogMessage(IRCMessageObject messageObject);
 
         void    CheckPing(string &buffer);
+        void    CheckGreeting(IRCMessageObject &messageObject);
+        void    CheckBotCommands(IRCMessageObject &messageObject);
 };
 
 #endif
