@@ -5,7 +5,7 @@ CC	= g++
 CFLAGS	= -g -Wall -ansi
 LDFLAGS	= -lsqlite3
 INCLUDE	= .
-OBJ	= main.o LogDatabase.o IRCMessageParser.o IRCLibrary.o IRCBot.o
+OBJ	= main.o ConfigLoader.o LogDatabase.o IRCMessageParser.o IRCLibrary.o IRCBot.o
 
 # executable
 IRCBot:	$(OBJ)
@@ -17,7 +17,7 @@ IRCBot:	$(OBJ)
 clean:	
 	rm $(OBJ) IRCBot
 	
-all:	IRCBot
+all:	checkcc checksql IRCBot
 
 install: checkcc checksql
 
@@ -26,6 +26,7 @@ checkcc:
 	@if [ ! -f $(CCDIR) ]; \
 	then \
 		sudo apt-get install g++;\
+		echo "installed g++ in $(CCDIR)"; \
 	else \
 		echo "g++ is installed.";\
 	fi
@@ -34,14 +35,7 @@ checkcc:
 checksql:	
 	@if [ ! -f $(SQLDIR) ]; \
 	then \
-		mkdir tmpfolder; \
-		cd tmpfolder; \
-		wget http://www.sqlite.org/2013/sqlite-autoconf-3071700.tar.gz; \
-		sudo tar xfvz sqlite-autoconf-3071700.tar.gz; \
-		./sqlite-autoconf-3071700/configure; \
-		sudo make install; \
-		cd..;\
-		sudo rm -r tmpfolder;\
+		sudo apt-get install libsqlite3-dev sqlite3;\
 		echo "installed sqlite3 in $(SQLDIR)"; \
 	else \
 		echo "sqlite3 is installed.";\

@@ -147,8 +147,8 @@ bool IRCBot::CheckBotCommands(IRCMessageObject &messageObject) {
 
     } else if ((pos = messageObject.Find("-get_lastseen")) != -1) {
 
-    } else if ((pos = messageObject.Find("-help")) != -1) {
-
+    } else {
+        CheckMessageAndSendResponse(messageObject, "Sorry " + messageObject.sender + " , I didn't understand...");
     }
     return true;
 }
