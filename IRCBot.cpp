@@ -50,12 +50,31 @@ bool IRCBot::Loop() {
 }
 
 bool IRCBot::BotAction(IRCMessageObject messageObject) {
+    if (messageObject.type != IRC_PRIVMSG)
+        return true;
+
+    int pos;
+    if (!messageObject.channel.empty()) {
+        vector<string> str; str.push_back("hallo"); str.push_back("hello"); str.push_back("hi");
+        if ((pos = messageObject.Find(str)) != -1)
+            SendMessage("Hallo " + messageObject.sender + "!");
+        cout << pos << "!!!" << endl;
+    }
+    if (messageObject.receiver == nickname) {
+
+    }
+
+
+
 
     return true;
 }
 
 void IRCBot::SendMessage(string message) {
     IRCLibrary::Send("PRIVMSG #" + currentChannel + " :" + message);
+}
+void IRCBot::SendPrivateMessage(string message, string receiver) {
+    IRCLibrary::Send("PRIVMSG " + receiver + " :" + message);
 }
 void IRCBot::ChangeNick(string nickname) {
     this->nickname = nickname;
@@ -75,6 +94,9 @@ void IRCBot::LeaveChannel(string channel) {
     SendMessage("Leaving channel " + channel + "... bye!");
     IRCLibrary::Send("PART #" + channel);
 }
+void IRCBot::LogMessage(IRCMessageObject messageObject) {
+}
+
 
 void IRCBot::CheckPing(string &buffer) {
     size_t pos = buffer.find("PING");

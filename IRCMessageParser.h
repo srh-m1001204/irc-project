@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -14,16 +15,18 @@ enum IRCMessageType {
     IRC_NOTICE,
     IRC_QUIT
 };
-
 class IRCMessageObject {
 public:
-    IRCMessageObject() {};
-    ~IRCMessageObject() {};
+    IRCMessageObject();
+    ~IRCMessageObject();
     IRCMessageType  type;
     string          sender;
     string          channel;
     string          receiver;
     vector<string>  message;
+
+    int             Find(string str);
+    int             Find(vector<string> strVec);
 };
 class IRCMessageParser {
 public:

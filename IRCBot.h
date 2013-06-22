@@ -1,6 +1,8 @@
 #ifndef IRCBOT_H
 #define IRCBOT_H
 
+#include <vector>
+
 #include "IRCLibrary.h"
 #include "IRCMessageParser.h"
 
@@ -32,6 +34,7 @@ class IRCBot {
 
         bool    BotAction(IRCMessageObject messageObject);
         void    SendMessage(string message);
+        void    SendPrivateMessage(string message, string receiver);
 
         // bot functions
         void    ChangeNick(string nickname);

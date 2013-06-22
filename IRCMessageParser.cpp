@@ -1,5 +1,37 @@
 #include "IRCMessageParser.h"
 
+// class IRCMessageObject
+IRCMessageObject::IRCMessageObject() {}
+IRCMessageObject::~IRCMessageObject() {}
+int IRCMessageObject::Find(string str) {
+    transform(str.begin(), str.end(), str.begin(), ::tolower);
+    string temp;
+    int index = 0;
+    for (vector<string>::iterator it=message.begin(); it!=message.end(); it++) {
+        temp = *it;
+        transform(temp.begin(), temp.end(), temp.begin(), ::tolower);
+        if (temp.find(str) != string::npos)
+            return index;
+        index++;
+    } return -1;
+}
+int IRCMessageObject::Find(vector<string> strVec) {
+    string temp1, temp2;
+    int index = 0;
+    for (vector<string>::iterator it1=message.begin(); it1!=message.end(); it1++) {
+        temp1 = *it1;
+        transform(temp1.begin(), temp1.end(), temp1.begin(), ::tolower);
+        for (vector<string>::iterator it2=strVec.begin(); it2!=strVec.end(); it2++) {
+            temp2 = *it2;
+            transform(temp2.begin(), temp2.end(), temp2.begin(), ::tolower);
+            if (temp1.find(temp2) != string::npos)
+                return index;
+        } index++;
+    } return -1;
+}
+
+
+// class IRCMessageParse
 IRCMessageObject IRCMessageParser::ParseMessage(string message, bool &error) {
     IRCMessageObject msgObj;
     size_t pos1, pos2;
