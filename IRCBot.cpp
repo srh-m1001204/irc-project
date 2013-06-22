@@ -2,9 +2,9 @@
 
 IRCBot::IRCBot(string nickname) {
     this->nickname = nickname;
+    LogDatabase::InitDatabase("logDatabase.sqlite");
 }
 IRCBot::~IRCBot() {
-
 }
 bool IRCBot::Start() {
     return Loop();
@@ -95,7 +95,7 @@ bool IRCBot::CheckBotCommands(IRCMessageObject &messageObject) {
     // bot functions
     int pos;
     if ((pos = messageObject.Find("-logging")) != -1) {
-        if (messageObject.message.size()-1 < pos+1) {
+        if ((int)messageObject.message.size()-1 < pos+1) {
             CheckMessageAndSendResponse(messageObject, "command needs 1 parameter...");
         } else if (messageObject.message[pos+1] == "on") {
             SetLogging(true);
@@ -107,28 +107,28 @@ bool IRCBot::CheckBotCommands(IRCMessageObject &messageObject) {
             CheckMessageAndSendResponse(messageObject, "wrong parameter... type 'on'/'off' as parameter");
         }
     } else if ((pos = messageObject.Find("-nick")) != -1) {
-        if (messageObject.message.size()-1 < pos+1) {
+        if ((int)messageObject.message.size()-1 < pos+1) {
             CheckMessageAndSendResponse(messageObject, "command needs 1 parameter...");
         } else {
             ChangeNick(messageObject.message[pos+1]);
             CheckMessageAndSendResponse(messageObject, "changed nickname into " + messageObject.message[pos+1] + "...");
         }
     } else if ((pos = messageObject.Find("-join")) != -1) {
-        if (messageObject.message.size()-1 < pos+1) {
+        if ((int)messageObject.message.size()-1 < pos+1) {
             CheckMessageAndSendResponse(messageObject, "command needs 1 parameter...");
         } else {
             JoinChannel(messageObject.message[pos+1]);
             CheckMessageAndSendResponse(messageObject, "joined channel " + messageObject.message[pos+1] + "...");
         }
     } else if ((pos = messageObject.Find("-leave")) != -1) {
-        if (messageObject.message.size()-1 < pos+1) {
+        if ((int)messageObject.message.size()-1 < pos+1) {
             CheckMessageAndSendResponse(messageObject, "command needs 1 parameter...");
         } else {
             CheckMessageAndSendResponse(messageObject, "leaving channel " + messageObject.message[pos+1] + "...");
             LeaveChannel(messageObject.message[pos+1]);
         }
     } else if ((pos = messageObject.Find("-topic")) != -1) {
-        if (messageObject.message.size()-1 < pos+2) {
+        if ((int)messageObject.message.size()-1 < pos+2) {
             CheckMessageAndSendResponse(messageObject, "command needs 2 parameter...");
         } else {
             ChangeTopic(messageObject.message[pos+1], messageObject.message[pos+2]);
@@ -136,7 +136,7 @@ bool IRCBot::CheckBotCommands(IRCMessageObject &messageObject) {
                     + messageObject.message[pos+1] + " into " + messageObject.message[pos+1] + "...");
         }
     } else if ((pos = messageObject.Find("-topic")) != -1) {
-        if (messageObject.message.size()-1 < pos+2) {
+        if ((int)messageObject.message.size()-1 < pos+2) {
             CheckMessageAndSendResponse(messageObject, "command needs 2 parameter...");
         } else {
             ChangeTopic(messageObject.message[pos+1], messageObject.message[pos+2]);
@@ -171,5 +171,9 @@ void IRCBot::SetLogging(bool logging) {
 }
 void IRCBot::LogMessage(IRCMessageObject messageObject) {
 }
-
-
+string IRCBot::ShowLog() {
+    return "";
+}
+string IRCBot::ShowLastSeen(string nickname) {
+    return "";
+}

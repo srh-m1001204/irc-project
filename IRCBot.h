@@ -5,6 +5,7 @@
 
 #include "IRCLibrary.h"
 #include "IRCMessageParser.h"
+#include "LogDatabase.h"
 
 class IRCBot {
     public:
@@ -40,6 +41,8 @@ class IRCBot {
         void    LeaveChannel(string channel);
         void    SetLogging(bool logging);
         void    LogMessage(IRCMessageObject messageObject);
+        string  ShowLog();
+        string  ShowLastSeen(string nickname);
 };
 
 #endif
