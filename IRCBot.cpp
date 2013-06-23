@@ -1,20 +1,31 @@
 #include "IRCBot.h"
 
+IRCBot::IRCBot() {
+    LogDatabase::InitDatabase("logDatabase.sqlite");
+}
 IRCBot::IRCBot(string nickname) {
     this->nickname = nickname;
+    this->logging = false;
     LogDatabase::InitDatabase("logDatabase.sqlite");
 }
 IRCBot::~IRCBot() {
 }
-bool IRCBot::Start() {
-    return Loop();
-}
-
 bool IRCBot::ConnectToServer(string host, int port, string channel) {
     if (!IRCLibrary::Connect(host, port))
         return false;
     IRCLibrary::Login(nickname, channel);
     return true;
+}
+void IRCBot::Configure(int argc, char **argv, string path) {
+
+}
+bool IRCBot::Start() {
+    if (!ConnectToServer("irc.freenode.net", 6667, "CrazyChannel"))
+        return false;
+    return Loop();
+}
+void IRCBot::CreateDefaultConfig() {
+
 }
 
 bool IRCBot::Loop() {
@@ -33,7 +44,6 @@ bool IRCBot::Loop() {
 
         // parse buffer and create message object
         messageObject = IRCMessageParser::ParseMessage(buffer, parseError);
-
         // continue with loop if message is useless
         if (parseError)
             continue;
@@ -135,18 +145,17 @@ bool IRCBot::CheckBotCommands(IRCMessageObject &messageObject) {
             CheckMessageAndSendResponse(messageObject, "tried to change topic on channel "
                     + messageObject.message[pos+1] + " into " + messageObject.message[pos+1] + "...");
         }
-    } else if ((pos = messageObject.Find("-topic")) != -1) {
-        if ((int)messageObject.message.size()-1 < pos+2) {
-            CheckMessageAndSendResponse(messageObject, "command needs 2 parameter...");
-        } else {
-            ChangeTopic(messageObject.message[pos+1], messageObject.message[pos+2]);
-            CheckMessageAndSendResponse(messageObject, "tried to change topic on channel "
-                    + messageObject.message[pos+1] + " into " + messageObject.message[pos+1] + "...");
-        }
+    } else if ((pos = messageObject.Find("-exit")) != -1) {
+        CheckMessageAndSendResponse(messageObject, "disconnecting... bye bye!");
+        return false;
     } else if ((pos = messageObject.Find("-get_log")) != -1) {
-
+        CheckMessageAndSendResponse(messageObject, GetLog());
     } else if ((pos = messageObject.Find("-get_lastseen")) != -1) {
-
+        if ((int)messageObject.message.size()-1 < pos+1) {
+            CheckMessageAndSendResponse(messageObject, "command needs 1 parameter...");
+        } else {
+            CheckMessageAndSendResponse(messageObject, GetLastSeen(messageObject.message[pos+1]));
+        }
     } else {
         CheckMessageAndSendResponse(messageObject, "Sorry " + messageObject.sender + " , I didn't understand...");
     }
@@ -169,11 +178,18 @@ void IRCBot::LeaveChannel(string channel) {
 void IRCBot::SetLogging(bool logging) {
     this->logging = logging;
 }
-void IRCBot::LogMessage(IRCMessageObject messageObject) {
+void IRCBot::LogMessage(IRCMessageObject &messageObject) {
+    switch(messageObject.type) {
+    case IRC_PRIVMSG:
+        LogDatabase::InsertLog(messageObject.sender, messageObject.channel, messageObject.GetMessageString());
+        break;
+    default:
+        break;
+    };
 }
-string IRCBot::ShowLog() {
-    return "";
+string IRCBot::GetLog() {
+    return LogDatabase::GetLog();
 }
-string IRCBot::ShowLastSeen(string nickname) {
-    return "";
+string IRCBot::GetLastSeen(string nickname) {
+    return LogDatabase::LastSeen(nickname);
 }

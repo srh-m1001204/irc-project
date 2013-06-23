@@ -46,6 +46,13 @@ int IRCMessageObject::Find(vector<string> strVec) {
         } index++;
     } return -1;
 }
+// merges all message parts together to one string and returns the string
+string IRCMessageObject::GetMessageString() {
+    stringstream msgStream;
+    for (vector<string>::iterator it=message.begin(); it!=message.end(); it++)
+        msgStream << *it << " ";
+    return msgStream.str();
+}
 
 
 // class IRCMessageParse
@@ -62,14 +69,14 @@ IRCMessageObject IRCMessageParser::ParseMessage(string message, bool &error) {
 
     // parse sender of message
     pos1++;
-    msgObj.sender = message.substr(pos1, pos2-pos1-1);
+    msgObj.sender = message.substr(pos1, pos2-pos1);
 
     pos1 = message.find(" ");
     pos2 = message.find(" ", pos1+1);
 
     // parse type of message
     pos1++;
-    string msgType = message.substr(pos1, pos2-pos1-1);
+    string msgType = message.substr(pos1, pos2-pos1);
     if (msgType == "PRIVMSG")       msgObj.type = IRC_PRIVMSG;
     else if (msgType == "JOIN")     msgObj.type = IRC_JOIN;
     else if (msgType == "PART")     msgObj.type = IRC_PART;
@@ -87,14 +94,14 @@ IRCMessageObject IRCMessageParser::ParseMessage(string message, bool &error) {
     pos1 = pos2;
     while ((pos2 = message.find(" ", pos1+1)) != string::npos) {
         pos1++;
-        msgPart = message.substr(pos1, pos2-pos1-1);
+        msgPart = message.substr(pos1, pos2-pos1);
         if (!msgPart.empty()) {
             IRCMessageParser::CheckAndAddPart(partNo++, msgPart, msgObj);
         } pos1 = pos2;
     }
     // parse last message part
     pos1++;
-    msgPart = message.substr(pos1, pos2-pos1-1);
+    msgPart = message.substr(pos1, pos2-pos1);
     if (!msgPart.empty())
         IRCMessageParser::CheckAndAddPart(partNo, msgPart, msgObj);
 

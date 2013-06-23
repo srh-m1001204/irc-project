@@ -5,7 +5,7 @@ CC	= g++
 CFLAGS	= -g -Wall -ansi
 LDFLAGS	= -lsqlite3
 INCLUDE	= .
-OBJ	= main.o ConfigLoader.o LogDatabase.o IRCMessageParser.o IRCLibrary.o IRCBot.o
+OBJ	= main.o ConfigFile.o LogDatabase.o IRCMessageParser.o IRCLibrary.o IRCBot.o
 
 # executable
 IRCBot:	$(OBJ)
@@ -28,7 +28,7 @@ checkcc:
 		sudo apt-get install g++;\
 		echo "installed g++ in $(CCDIR)"; \
 	else \
-		echo "g++ is installed.";\
+		echo "g++ is already installed.";\
 	fi
 
 # check if sqlite3 is installed
@@ -38,5 +38,5 @@ checksql:
 		sudo apt-get install libsqlite3-dev sqlite3;\
 		echo "installed sqlite3 in $(SQLDIR)"; \
 	else \
-		echo "sqlite3 is installed.";\
+		echo "sqlite3 is already installed.";\
 	fi

@@ -2,6 +2,7 @@
 #define IRCMESSAGEPARSER_H
 
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <algorithm>
 
@@ -30,6 +31,7 @@ public:
     int             Find(string str);
     int             Find(string str[], size_t length);
     int             Find(vector<string> strVec);
+    string          GetMessageString();
 };
 class IRCMessageParser {
 public:

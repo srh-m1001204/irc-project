@@ -33,8 +33,9 @@ void LogDatabase::ClearLogTable() {
     CloseLog();
 }
 
-void LogDatabase::InsertLog(string date, string name, string channel, string log) {
+void LogDatabase::InsertLog(string name, string channel, string log) {
     OpenLog();
+    int date = time(0);
     stringstream sstr;
     sstr << "INSERT INTO CHATLOG (DATE, NICKNAME, CHANNEL, LOG) VALUES ('"<< date <<"','"<< name <<"','"<< channel <<"','"<< log <<"')";
 
@@ -71,7 +72,7 @@ string LogDatabase::GetLog() {
     struct  tm   *timeinfo;
     time_t  t;
 
-    if (sqlite3_prepare_v2(database, "SELECT * FROM CHATLOG LIMIT 20", 1000, &stmt, &tail))
+    if (sqlite3_prepare_v2(database, "SELECT * FROM CHATLOG ORDER BY DATE DESC LIMIT 20", 1000, &stmt, &tail))
         CreateLogTable();
 	stringstream sstr;
 	while (sqlite3_step(stmt) == SQLITE_ROW) {

@@ -27,7 +27,7 @@ public:
     static void     DropLogTable();
     static void     ClearLogTable();
 
-    static void     InsertLog(string date, string name, string channel, string log);
+    static void     InsertLog(string name, string channel, string log);
     static string   LastSeen(string name);
     static string   GetLog();
 
