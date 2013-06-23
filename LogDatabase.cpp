@@ -72,7 +72,7 @@ string LogDatabase::GetLog() {
     struct  tm   *timeinfo;
     time_t  t;
 
-    if (sqlite3_prepare_v2(database, "SELECT * FROM CHATLOG ORDER BY DATE DESC LIMIT 20", 1000, &stmt, &tail))
+    if (sqlite3_prepare_v2(database, "SELECT * FROM CHATLOG ORDER BY DATE DESC LIMIT 10", 1000, &stmt, &tail))
         CreateLogTable();
 	stringstream sstr;
 	while (sqlite3_step(stmt) == SQLITE_ROW) {

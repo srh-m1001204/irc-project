@@ -241,13 +241,18 @@ void IRCBot::LogMessage(IRCMessageObject &messageObject) {
         break;
     };
 }
-void IRCBot::ShowLog(IRCMessageObject &messageObject)) {
+void IRCBot::ShowLog(IRCMessageObject &messageObject) {
     string log = GetLog();
     if (log.empty()) {
         CheckMessageAndSendResponse(messageObject, "Empty Log!");
         return;
     }
-    // coding to do
+    size_t pos1 = 0, pos2;
+    while ((pos2 = log.find("\n", pos1)) != string::npos) {
+        CheckMessageAndSendResponse(messageObject, log.substr(pos1, pos2 - pos1));
+        cout << log.substr(pos1, pos2 - pos1) << endl;
+        pos1 = pos2 + 1;
+    }
 
 }
 string IRCBot::GetLog() {
