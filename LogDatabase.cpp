@@ -84,7 +84,7 @@ string LogDatabase::GetLog() {
         sstr << strtime << " "
             << sqlite3_column_text(stmt, 1) << " "
 			<< sqlite3_column_text(stmt, 2) << " "
-			<< sqlite3_column_text(stmt, 3) << " || ";
+			<< sqlite3_column_text(stmt, 3) << "\n";
 	} sqlite3_finalize(stmt);
 	CloseLog();
 	return sstr.str();

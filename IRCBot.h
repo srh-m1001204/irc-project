@@ -15,13 +15,14 @@ class IRCBot {
 
     // methods
         bool    ConnectToServer(string host, int port, string channel);
-        void    Configure(int argc, char **argv, string path);
+        bool    Configure(int argc, char **argv, string path);
         bool    Start();
 
     private:
     // variables
-        string  nickname;
-        bool    logging;
+        string      nickname;
+        bool        logging;
+        ConfigFile  *configFile;
 
     // methods
         void    CreateDefaultConfig();
@@ -43,6 +44,7 @@ class IRCBot {
         void    LeaveChannel(string channel);
         void    SetLogging(bool logging);
         void    LogMessage(IRCMessageObject &messageObject);
+        void    ShowLog();
         string  GetLog();
         string  GetLastSeen(string nickname);
 };

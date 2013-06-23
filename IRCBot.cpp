@@ -2,13 +2,17 @@
 
 IRCBot::IRCBot() {
     LogDatabase::InitDatabase("logDatabase.sqlite");
+    logging = true;
+    configFile = NULL;
 }
 IRCBot::IRCBot(string nickname) {
     this->nickname = nickname;
     this->logging = false;
     LogDatabase::InitDatabase("logDatabase.sqlite");
+    configFile = NULL;
 }
 IRCBot::~IRCBot() {
+    delete configFile;
 }
 bool IRCBot::ConnectToServer(string host, int port, string channel) {
     if (!IRCLibrary::Connect(host, port))
@@ -16,16 +20,65 @@ bool IRCBot::ConnectToServer(string host, int port, string channel) {
     IRCLibrary::Login(nickname, channel);
     return true;
 }
-void IRCBot::Configure(int argc, char **argv, string path) {
+bool IRCBot::Configure(int argc, char **argv, string path) {
+    configFile = new ConfigFile(path);
+    // try to open config file.
+    // if not possible, create new default config file
+    if (!configFile->Load())
+        CreateDefaultConfig();
 
+    // check entered arguments and edit config file
+    switch (argc) {
+    case 1:         // case if no arguments were entered
+        break;
+    case 2:         // 1 argument:  (nickname)
+        configFile->SetValueOf("nickname", string(argv[1]));
+        break;
+    case 4:         // 3 arguments: (host, port, channel)
+        configFile->SetValueOf("host", string(argv[1]));
+        configFile->SetValueOf("port", string(argv[2]));
+        configFile->SetValueOf("channel", string(argv[3]));
+        break;
+    case 5:         // 4 arguments: (host, port, channel, nickname)
+        configFile->SetValueOf("host", string(argv[1]));
+        configFile->SetValueOf("port", string(argv[2]));
+        configFile->SetValueOf("channel", string(argv[3]));
+        configFile->SetValueOf("nickname", string(argv[4]));
+        break;
+    default:        // case if wrong number of arguments
+        perror("not allowed number of arguments...");
+        break;
+        return false;
+    };
+    // serializing config file after editing
+    configFile->Save();
+    return true;
 }
 bool IRCBot::Start() {
-    if (!ConnectToServer("irc.freenode.net", 6667, "CrazyChannel"))
+    // check if bot is configured an if there are four config-attributes
+    if (!configFile || configFile->attribute.size() != 4) {
+        perror("bot was not configured correctly...");
         return false;
+    }
+    // get configured values and set nickname and try to connect to server
+    nickname = configFile->GetValueOf("nickname");
+    if (!ConnectToServer(   configFile->GetValueOf("host"),
+                            atoi(configFile->GetValueOf("port").c_str()),
+                            configFile->GetValueOf("channel")))
+        return false;
+    // if everything works fine, start bot loop
     return Loop();
 }
 void IRCBot::CreateDefaultConfig() {
-
+    if (configFile) {
+        cout << "creating default config file..." << endl;
+        configFile->AddAttribute("host",        "irc.freenode.net");
+        configFile->AddAttribute("port",        "6667");
+        configFile->AddAttribute("channel",     "BlubChannel");
+        configFile->AddAttribute("nickname",    "BuenyBot");
+        configFile->Save();
+        cout << "done!" << endl;
+    }
 }
 
 bool IRCBot::Loop() {
@@ -147,10 +200,11 @@ bool IRCBot::CheckBotCommands(IRCMessageObject &messageObject) {
         }
     } else if ((pos = messageObject.Find("-exit")) != -1) {
         CheckMessageAndSendResponse(messageObject, "disconnecting... bye bye!");
+        IRCLibrary::Send("QUIT :bye!");
         return false;
-    } else if ((pos = messageObject.Find("-get_log")) != -1) {
-        CheckMessageAndSendResponse(messageObject, GetLog());
-    } else if ((pos = messageObject.Find("-get_lastseen")) != -1) {
+    } else if ((pos = messageObject.Find("-show_log")) != -1) {
+        ShowLog();
+    } else if ((pos = messageObject.Find("-show_lastseen")) != -1) {
         if ((int)messageObject.message.size()-1 < pos+1) {
             CheckMessageAndSendResponse(messageObject, "command needs 1 parameter...");
         } else {
@@ -187,9 +241,15 @@ void IRCBot::LogMessage(IRCMessageObject &messageObject) {
         break;
     };
 }
+void IRCBot::ShowLog() {
+
+}
 string IRCBot::GetLog() {
     return LogDatabase::GetLog();
 }
 string IRCBot::GetLastSeen(string nickname) {
-    return LogDatabase::LastSeen(nickname);
+    string lastseen = LogDatabase::LastSeen(nickname);
+    if (lastseen.empty())
+        return (nickname + " was never logged...");
+    return lastseen;
 }
