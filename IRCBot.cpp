@@ -47,8 +47,8 @@ bool IRCBot::Configure(int argc, char **argv, string path) {
         break;
     default:        // case if wrong number of arguments
         perror("not allowed number of arguments...");
-        break;
         return false;
+        break;
     };
     // serializing config file after editing
     configFile->Save();
