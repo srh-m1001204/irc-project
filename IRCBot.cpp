@@ -203,7 +203,7 @@ bool IRCBot::CheckBotCommands(IRCMessageObject &messageObject) {
         IRCLibrary::Send("QUIT :bye!");
         return false;
     } else if ((pos = messageObject.Find("-show_log")) != -1) {
-        ShowLog();
+        ShowLog(messageObject);
     } else if ((pos = messageObject.Find("-show_lastseen")) != -1) {
         if ((int)messageObject.message.size()-1 < pos+1) {
             CheckMessageAndSendResponse(messageObject, "command needs 1 parameter...");
@@ -241,7 +241,13 @@ void IRCBot::LogMessage(IRCMessageObject &messageObject) {
         break;
     };
 }
-void IRCBot::ShowLog() {
+void IRCBot::ShowLog(IRCMessageObject &messageObject)) {
+    string log = GetLog();
+    if (log.empty()) {
+        CheckMessageAndSendResponse(messageObject, "Empty Log!");
+        return;
+    }
+    // coding to do
 
 }
 string IRCBot::GetLog() {

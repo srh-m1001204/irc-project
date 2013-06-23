@@ -44,7 +44,7 @@ class IRCBot {
         void    LeaveChannel(string channel);
         void    SetLogging(bool logging);
         void    LogMessage(IRCMessageObject &messageObject);
-        void    ShowLog();
+        void    ShowLog(IRCMessageObject &messageeObject);
         string  GetLog();
         string  GetLastSeen(string nickname);
 };
